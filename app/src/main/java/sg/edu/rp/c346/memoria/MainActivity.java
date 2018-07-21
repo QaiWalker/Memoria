@@ -27,11 +27,17 @@ public class MainActivity extends AppCompatActivity {
     int clarinet, clarinet1, drum, drum1, horn, horn1,
             saxophone, saxophone1, trumpet, trumpet1, tuba, tuba1;
 
+    //Cards to check if they match
     int firstCard, secondCard;
+
+    //User clicked first and second
     int clickedFirst, clickedSecond;
     int cardNumber = 1;
 
+    //Player 1 starts first
     int turn = 1;
+
+    //Default points for first player and second player
     int playerPoints = 0, cpuPoints = 0;
 
 
@@ -331,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
                 tv_p1.setTextColor(Color.GRAY);
                 tv_p2.setTextColor(Color.BLACK);
             } else if(turn == 2){
-                turn = 2;
+                turn = 1;
                 tv_p2.setTextColor(Color.GRAY);
                 tv_p1.setTextColor(Color.BLACK);
             }
