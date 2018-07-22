@@ -3,6 +3,8 @@ package sg.edu.rp.c346.memoria;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +14,98 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class MainActivity extends AppCompatActivity {
+public class TimeActivity extends AppCompatActivity {
 
-    TextView tv_p1, tv_p2;
+    //Declare timer
+    CountDownTimer cTimer;
+    Boolean counterIsActive = false;
+    private long timeRemaining = 0;
+
+    //start timer function
+    void startTimer() {
+        cTimer = new CountDownTimer(30000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                tvTimer.setText("Time: 0:" + millisUntilFinished / 1000);
+
+            }
+            public void onFinish() {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TimeActivity.this);
+                alertDialogBuilder
+                        .setMessage("TIMES UP! \nScore: " + playerPoints + "\nBest Score: ")
+                        .setCancelable(false)
+                        .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+            }
+        };
+        cTimer.start();
+    }
+
+    //cancel timer
+    void cancelTimer() {
+        if(cTimer!=null)
+            cTimer.cancel();
+    }
+
+    //resume timer
+    void resumeTimer(){
+        long millisInFuture = timeRemaining;
+        long countDownInterval = 1000;
+        cTimer = new CountDownTimer(millisInFuture, countDownInterval) {
+            @Override
+            public void onTick(long l) {
+                tvTimer.setText("Time: 0" + l / 1000);
+                timeRemaining = l;
+            }
+
+            @Override
+            public void onFinish() {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TimeActivity.this);
+                alertDialogBuilder
+                        .setMessage("TIMES UP! \nScore: " + playerPoints + "\nBest Score: ")
+                        .setCancelable(false)
+                        .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+            }
+        }.start();
+    }
+    TextView tv_p1, tvTimer;
 
     ImageView iv_11, iv_12, iv_13, iv_14, iv_21, iv_22, iv_23, iv_24, iv_31, iv_32, iv_33, iv_34;
 
@@ -38,21 +123,17 @@ public class MainActivity extends AppCompatActivity {
     int clickedFirst, clickedSecond;
     int cardNumber = 1;
 
-    //Player 1 starts first
-    int turn = 1;
-
     //Default points for first player and second player
-    int playerPoints = 0, cpuPoints = 0;
-
-
+    int playerPoints = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_time);
+
 
         tv_p1 = (TextView)findViewById(R.id.tv_p1);
-        tv_p2 = (TextView)findViewById(R.id.tv_p2);
+        tvTimer = (TextView)findViewById(R.id.tvTimer);
 
         iv_11 = (ImageView)findViewById(R.id.iv_11);
         iv_12 = (ImageView)findViewById(R.id.iv_12);
@@ -85,9 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Shuffle the Images
         Collections.shuffle(Arrays.asList(cardsArray));
-
-        //Changing the colour of the second player (inactive)
-        tv_p2.setTextColor(Color.GRAY);
 
         iv_11.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,6 +335,12 @@ public class MainActivity extends AppCompatActivity {
             }, 1000);
 
         }
+        if(counterIsActive == false){
+            startTimer();
+        } else {
+            resumeTimer();
+        }
+
     }
 
     private void calculate(){
@@ -313,14 +397,8 @@ public class MainActivity extends AppCompatActivity {
             }else if(clickedSecond == 11){
                 iv_34.setVisibility(View.INVISIBLE);
             }
-            //Add points to correct player
-            if(turn == 1){
-                playerPoints++;
-                tv_p1.setText("Player 1: " + playerPoints);
-            }else if (turn == 2){
-                cpuPoints++;
-                tv_p2.setText("Player 2: " + cpuPoints);
-            }
+            playerPoints++;
+            tv_p1.setText("Score: " + playerPoints);
         } else {
             iv_11.setImageResource(R.drawable.treble);
             iv_12.setImageResource(R.drawable.treble);
@@ -335,16 +413,16 @@ public class MainActivity extends AppCompatActivity {
             iv_33.setImageResource(R.drawable.treble);
             iv_34.setImageResource(R.drawable.treble);
 
-            //Change the player turn
-            if(turn == 1){
-                turn = 2;
-                tv_p1.setTextColor(Color.GRAY);
-                tv_p2.setTextColor(Color.BLACK);
-            } else if(turn == 2){
-                turn = 1;
-                tv_p2.setTextColor(Color.GRAY);
-                tv_p1.setTextColor(Color.BLACK);
-            }
+//            //Change the player turn
+//            if(turn == 1){
+//                turn = 2;
+//                tv_p1.setTextColor(Color.GRAY);
+//                tv_p2.setTextColor(Color.BLACK);
+//            } else if(turn == 2){
+//                turn = 1;
+//                tv_p2.setTextColor(Color.GRAY);
+//                tv_p1.setTextColor(Color.BLACK);
+//            }
         }
         iv_11.setEnabled(true);
         iv_12.setEnabled(true);
@@ -360,6 +438,7 @@ public class MainActivity extends AppCompatActivity {
         iv_34.setEnabled(true);
 
         //Check if the game is over
+
         checkEnd();
     }
 
@@ -377,9 +456,9 @@ public class MainActivity extends AppCompatActivity {
                 iv_33.getVisibility() == View.INVISIBLE &&
                 iv_34.getVisibility() == View.INVISIBLE){
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TimeActivity.this);
             alertDialogBuilder
-                    .setMessage("GAME OVER! \nPlayer 1: " + playerPoints + "\nPlayer 2: " + cpuPoints)
+                    .setMessage("TIMES UP! \nScore: " + playerPoints + "\nBest Score: ")
                     .setCancelable(false)
                     .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
                         @Override
@@ -414,27 +493,27 @@ public class MainActivity extends AppCompatActivity {
         tuba = R.drawable.tuba;
         tuba1 = R.drawable.tuba1;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.home) {
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            Intent intent = new Intent(TimeActivity.this, HomeActivity.class);
             startActivity(intent);
         } else if (id == R.id.singleNormal){
-            Intent intent = new Intent(MainActivity.this, SingleActivity.class);
+            Intent intent = new Intent(TimeActivity.this, SingleActivity.class);
             startActivity(intent);
         } else if (id == R.id.singleTimer){
-            Intent intent = new Intent(MainActivity.this, TimeActivity.class);
+            Intent intent = new Intent(TimeActivity.this, TimeActivity.class);
             startActivity(intent);
         } else if (id == R.id.multiNormal){
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            Intent intent = new Intent(TimeActivity.this, MainActivity.class);
             startActivity(intent);
         }
 

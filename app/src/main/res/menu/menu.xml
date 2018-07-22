@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/home"
+        android:title="Home" />
+
+    <item android:id="@+id/singleNormal"
+        android:title="Single - Normal" />
+
+    <item android:id="@+id/singleTimer"
+        android:title="Single - Timer" />
+
+    <item android:id="@+id/multiNormal"
+        android:title="Multi - Normal" />
+
+</menu>
