@@ -4,23 +4,39 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     TextView tv_p1, tv_p2;
+    EditText etPlayer1, etPlayer2;
+    Button btnAddNames;
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference dbRef;
 
     ImageView iv_11, iv_12, iv_13, iv_14, iv_21, iv_22, iv_23, iv_24, iv_31, iv_32, iv_33, iv_34;
 
@@ -42,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     int turn = 1;
 
     //Default points for first player and second player
-    int playerPoints = 0, cpuPoints = 0;
+    int p1Point = 0, p2Point = 0;
 
 
 
@@ -51,8 +67,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         tv_p1 = (TextView)findViewById(R.id.tv_p1);
         tv_p2 = (TextView)findViewById(R.id.tv_p2);
+
+        etPlayer1 = findViewById(R.id.etFirstName);
+        etPlayer2 = findViewById(R.id.etSecondName);
+
+        btnAddNames = findViewById(R.id.btnAddName);
 
         iv_11 = (ImageView)findViewById(R.id.iv_11);
         iv_12 = (ImageView)findViewById(R.id.iv_12);
@@ -79,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
         iv_32.setTag("9");
         iv_33.setTag("10");
         iv_34.setTag("11");
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        dbRef = firebaseDatabase.getReference("players");
+
+        btnAddNames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Player player = new Player(etPlayer1.getText().toString(), etPlayer2.getText().toString());
+                dbRef.setValue(player);
+                tv_p1.setText(player.getFirstName() + ": 0");
+                tv_p2.setText(player.getSecondName() + ": 0");
+            }
+        });
 
         //Load the card images
         frontOfCardsResources();
@@ -314,13 +350,30 @@ public class MainActivity extends AppCompatActivity {
                 iv_34.setVisibility(View.INVISIBLE);
             }
             //Add points to correct player
-            if(turn == 1){
-                playerPoints++;
-                tv_p1.setText("Player 1: " + playerPoints);
-            }else if (turn == 2){
-                cpuPoints++;
-                tv_p2.setText("Player 2: " + cpuPoints);
-            }
+            dbRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Player player = dataSnapshot.getValue(Player.class);
+                    if(player != null){
+                        tv_p1.setText(player.getFirstName() + ": " + p1Point);
+                        tv_p2.setText(player.getSecondName() + ": " + p2Point);
+                    }
+                    if(turn == 1){
+                        p1Point++;
+                        tv_p1.setText(player.getFirstName() + ": " + p1Point);
+                    } else if (turn == 2){
+                        p2Point++;
+                        tv_p2.setText(player.getSecondName() + ": " + p2Point);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database error occurred", databaseError.toException());
+                }
+            });
+
+
+
         } else {
             iv_11.setImageResource(R.drawable.treble);
             iv_12.setImageResource(R.drawable.treble);
@@ -377,26 +430,41 @@ public class MainActivity extends AppCompatActivity {
                 iv_33.getVisibility() == View.INVISIBLE &&
                 iv_34.getVisibility() == View.INVISIBLE){
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder
-                    .setMessage("GAME OVER! \nPlayer 1: " + playerPoints + "\nPlayer 2: " + cpuPoints)
-                    .setCancelable(false)
-                    .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
-                        }
-                    });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            dbRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Player player = dataSnapshot.getValue(Player.class);
+                    if(player != null){
+                        tv_p1.setText(player.getFirstName() + ": " + p1Point);
+                        tv_p2.setText(player.getSecondName() + ": " + p2Point);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                        alertDialogBuilder
+                                .setMessage("GAME OVER! \n"+ player.getFirstName() +": " +  p1Point + "\n" + player.getSecondName() + ": " + p2Point)
+                                .setCancelable(false)
+                                .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                })
+                                .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        finish();
+                                    }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database error occurred", databaseError.toException());
+                }
+            });
+
         }
     }
 

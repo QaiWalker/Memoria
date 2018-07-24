@@ -62,12 +62,6 @@ public class TimeActivity extends AppCompatActivity {
         cTimer.start();
     }
 
-    //cancel timer
-    void cancelTimer() {
-        if(cTimer!=null)
-            cTimer.cancel();
-    }
-
     //resume timer
     void resumeTimer(){
         long millisInFuture = timeRemaining;
@@ -338,8 +332,6 @@ public class TimeActivity extends AppCompatActivity {
         if(counterIsActive == false){
             startTimer();
             counterIsActive = true;
-        } else {
-//            resumeTimer();
         }
 
     }
@@ -414,16 +406,6 @@ public class TimeActivity extends AppCompatActivity {
             iv_33.setImageResource(R.drawable.treble);
             iv_34.setImageResource(R.drawable.treble);
 
-//            //Change the player turn
-//            if(turn == 1){
-//                turn = 2;
-//                tv_p1.setTextColor(Color.GRAY);
-//                tv_p2.setTextColor(Color.BLACK);
-//            } else if(turn == 2){
-//                turn = 1;
-//                tv_p2.setTextColor(Color.GRAY);
-//                tv_p1.setTextColor(Color.BLACK);
-//            }
         }
         iv_11.setEnabled(true);
         iv_12.setEnabled(true);
@@ -459,7 +441,7 @@ public class TimeActivity extends AppCompatActivity {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TimeActivity.this);
             alertDialogBuilder
-                    .setMessage("TIMES UP! \nScore: " + playerPoints + "\nBest Score: ")
+                    .setMessage("GAME OVER! \nScore: " + playerPoints + "\nBest Score: ")
                     .setCancelable(false)
                     .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
                         @Override

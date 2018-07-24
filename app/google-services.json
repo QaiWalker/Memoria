@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "958550532611",
+    "firebase_url": "https://memoria-9d45e.firebaseio.com",
+    "project_id": "memoria-9d45e",
+    "storage_bucket": "memoria-9d45e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958550532611:android:b1dc82cf7591b789",
+        "android_client_info": {
+          "package_name": "sg.edu.rp.c346.memoria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958550532611-k0sc1o38k8vgsr7an5olslrbgr668o28.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhQaWMI1omX2gr-YxxW8XUYEV34yM-Fn8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
