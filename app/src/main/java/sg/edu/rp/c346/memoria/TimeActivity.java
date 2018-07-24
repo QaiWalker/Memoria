@@ -337,8 +337,9 @@ public class TimeActivity extends AppCompatActivity {
         }
         if(counterIsActive == false){
             startTimer();
+            counterIsActive = true;
         } else {
-            resumeTimer();
+//            resumeTimer();
         }
 
     }
