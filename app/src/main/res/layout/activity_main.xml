@@ -10,7 +10,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="554dp">
+            android:layout_height="560dp">
 
             <include
                 layout="@layout/images"
@@ -53,7 +53,7 @@
                 android:ems="10"
                 android:hint="Enter P1 Name"
                 android:inputType="textPersonName"
-                android:textColor="#FF69B4"/>
+                android:textColor="#FF69B4" />
 
             <TextView
                 android:id="@+id/tv_p1"
@@ -74,8 +74,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="Add"
-            android:textColor="#FF69B4"
-            android:backgroundTint="#FFFFFF"/>
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF69B4"/>
     </LinearLayout>
 
 </LinearLayout>
