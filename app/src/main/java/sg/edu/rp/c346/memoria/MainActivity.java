@@ -392,11 +392,11 @@ public class MainActivity extends AppCompatActivity {
             if(turn == 1){
                 turn = 2;
                 tv_p1.setTextColor(Color.GRAY);
-                tv_p2.setTextColor(Color.BLACK);
+                tv_p2.setTextColor(Color.parseColor("#FF69B4"));
             } else if(turn == 2){
                 turn = 1;
                 tv_p2.setTextColor(Color.GRAY);
-                tv_p1.setTextColor(Color.BLACK);
+                tv_p1.setTextColor(Color.parseColor("#FF69B4"));
             }
         }
         iv_11.setEnabled(true);
