@@ -31,7 +31,7 @@
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
         android:text="Memoria"
-        android:textColor="#FF69B4"
+        android:textColor="#FFD700"
         android:textSize="50dp"
         android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/ivLogo"
